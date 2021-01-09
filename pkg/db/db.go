@@ -24,3 +24,14 @@ func GetJob2(cnn *sql.DB,person Person) Job {
 	}
 	return job
 }
+
+func GetJobInsideCnn(person Person) Job {
+	cnn, _ := sql.Open("mysql", "user:password@tcp(host:port)/dbname")
+	var job Job
+	// This is N+1 Query
+	err := cnn.QueryRow("SELECT job_id, name FROM Jobs WHERE job_id = ?", person.JobID).Scan(&job.JobID, &job.Name)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return job
+}
